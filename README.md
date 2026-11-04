@@ -37,11 +37,27 @@ godot --path . -- --demo=complete    # 直接显示通关画面，方便截图
 | `scripts/loc.gd` | 中英文切换（autoload `Loc`） |
 | `data/strings.gd` | 全部中英文文本，每个 key 必须同时有 `zh` 和 `en` |
 | `tests/` | 无头运行的测试脚本 |
+| `tools/subset_font.py` | 生成内置中文字体子集 |
+| `export_presets.cfg` | Web 导出配置 |
 
-## 已知事项 / Notes
+## Web 版与 CI / Web build and CI
 
-- 字体目前用系统字体（苹方、微软雅黑、Noto Sans CJK 等）。导出 Web 和手机版之前，需要内置一个开源中文字体子集，例如 Noto Sans SC。
-- 导出各平台需要先在编辑器里安装 Export Templates。
+`.github/workflows/web.yml` 在每次推送到 `main` 时自动运行测试、导出 Web 版并发布到 GitHub Pages；PR 上只测试和导出，不发布。
+
+首次使用需要在仓库 Settings → Pages → Source 选择 **GitHub Actions**。发布地址：https://kalijerry.github.io/game_anx/
+
+Web 导出关闭了多线程，所以 GitHub Pages 不需要额外的 COOP/COEP 响应头。
+
+## 字体 / Font
+
+游戏内置 `assets/fonts/anx_ui.ttf`，是 Noto Sans SC（SIL OFL 1.1，见 `assets/fonts/OFL.txt`）的子集，只含游戏用到的字。新增文本后重新生成：
+
+```sh
+pip install fonttools
+python tools/subset_font.py path/to/NotoSansSC[wght].ttf
+```
+
+单元测试会检查所有文本都能被这个字体显示，漏了字会直接失败。
 
 ## 路线图 / Roadmap
 

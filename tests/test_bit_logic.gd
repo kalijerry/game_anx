@@ -32,5 +32,15 @@ func _init() -> void:
 		var e: Dictionary = Strings.STRINGS[key]
 		check(e.has("zh") and e.has("en") and e["zh"] != "" and e["en"] != "", "%s has zh and en" % key)
 
+	print("font")
+	var font: FontFile = load("res://assets/fonts/anx_ui.ttf")
+	var missing := ""
+	for key in Strings.STRINGS:
+		for lang in ["zh", "en"]:
+			for ch in String(Strings.STRINGS[key][lang]):
+				if ch != " " and not font.has_char(ch.unicode_at(0)) and not ch in missing:
+					missing += ch
+	check(missing == "", "bundled font covers all text (missing: '%s'; run tools/subset_font.py)" % missing)
+
 	print("%d failure(s)" % failures)
 	quit(1 if failures > 0 else 0)

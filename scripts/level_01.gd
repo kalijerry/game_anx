@@ -5,6 +5,7 @@ extends Node2D
 
 const P := preload("res://scripts/palette.gd")
 const Bits := preload("res://scripts/bit_logic.gd")
+const UI_FONT: FontFile = preload("res://assets/fonts/anx_ui.ttf")
 
 const TARGETS := ["A", "N", "X"]
 ## Language button label for each Loc.Mode: both, Chinese, English.
@@ -25,15 +26,15 @@ var msg_key := "intro"
 var msg_args := {}
 var anx_x := 0.0
 var time := 0.0
-var font: SystemFont
+var font: Font
 
 
 func _ready() -> void:
-	font = SystemFont.new()
-	font.font_names = PackedStringArray([
-		"PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC",
-		"Source Han Sans SC", "WenQuanYi Zen Hei", "sans-serif",
-	])
+	# Bundled subset of Noto Sans SC (tools/subset_font.py); system fonts only as a fallback.
+	font = UI_FONT.duplicate()
+	var system := SystemFont.new()
+	system.font_names = PackedStringArray(["PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "sans-serif"])
+	font.fallbacks = [system]
 	anx_x = _card_rect(cursor).get_center().x
 	Loc.changed.connect(queue_redraw)
 	# Screenshot helper: godot --path . -- --demo=complete
