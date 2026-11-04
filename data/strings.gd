@@ -59,4 +59,59 @@ const STRINGS := {
 		"en": "ASCII uses one byte per character, for example 65 = A.",
 	},
 	"replay": {"zh": "再玩一次", "en": "Play again"},
+	"next_level": {"zh": "下一关", "en": "Next level"},
+	"main_menu": {"zh": "主菜单", "en": "Main menu"},
+	"level_1_short": {"zh": "第 1 关", "en": "Level 1"},
+	"level_2_short": {"zh": "第 2 关", "en": "Level 2"},
+	# ------------------------------------------------------------ Developer console
+	"console_help": {
+		"zh": "命令：test 选关 · menu 主菜单 · lang zh / lang en 切换语言 · help 帮助。按 ` 或 Esc 关闭。",
+		"en": "Commands: test (level select) · menu · lang zh / lang en · help. Press ` or Esc to close.",
+	},
+	"console_unknown": {"zh": "未知命令：{cmd}。输入 help 查看命令。", "en": "Unknown command: {cmd}. Type help."},
+	"level_select": {"zh": "选关：点击要进入的关卡", "en": "Level select: pick a level"},
+	# ------------------------------------------------------------ Level 2
+	"level2_title": {"zh": "第 2 关 · 时钟节拍", "en": "Level 2 · The Clock Ticks"},
+	"clock": {"zh": "时钟 CLK", "en": "Clock CLK"},
+	"rising_edge": {"zh": "上升沿", "en": "Rising edge"},
+	"input_d": {"zh": "输入 D", "en": "Input D"},
+	"register": {"zh": "寄存器：8 个触发器", "en": "Register: 8 flip-flops"},
+	"value": {"zh": "数值", "en": "Value"},
+	"l2_intro": {
+		"zh": "CPU 里的一切都跟着时钟走：只有在上升沿，寄存器才会记住输入 D。",
+		"en": "Everything in a CPU follows the clock: registers only capture D on a rising edge.",
+	},
+	"l2_hint": {
+		"zh": "把 {letter} = {bits} 送进寄存器：每个上升沿前设好 D，从左边第一位开始。",
+		"en": "Load {letter} = {bits}: set D before each rising edge, leftmost bit first.",
+	},
+	"l2_hint_fast": {
+		"zh": "时钟变快了！把 {letter} = {bits} 送进寄存器。",
+		"en": "The clock got faster! Load {letter} = {bits}.",
+	},
+	"l2_success": {
+		"zh": "寄存器里现在是 {bits}，正是 {letter}！",
+		"en": "The register now holds {bits}: that's {letter}!",
+	},
+	"l2_complete": {
+		"zh": "G、O，出发！你刚刚像 CPU 一样跟着时钟节拍工作。",
+		"en": "G, O: let's go! You just worked to a clock beat, like a CPU.",
+	},
+	"l2_controls": {
+		"zh": "空格切换 D 的 0 和 1，也可以直接点击 D 开关。",
+		"en": "Space toggles D between 0 and 1, or tap the D switch.",
+	},
+	"card2_title": {"zh": "知识卡 · 时钟与触发器", "en": "Knowledge Card · Clock and Flip-flops"},
+	"card2_1": {
+		"zh": "时钟是一串不停的高低脉冲，一高一低叫一个周期。",
+		"en": "The clock is a steady train of pulses; one high and one low make a cycle.",
+	},
+	"card2_2": {
+		"zh": "触发器只在上升沿记住输入，其余时间保持不变，所以能存 1 个比特。",
+		"en": "A flip-flop captures input only on a rising edge, so it can hold 1 bit.",
+	},
+	"card2_3": {
+		"zh": "3 GHz 的 CPU，每秒有 30 亿个上升沿。",
+		"en": "A 3 GHz CPU sees 3 billion rising edges every second.",
+	},
 }

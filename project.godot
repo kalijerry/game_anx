@@ -13,6 +13,7 @@ config/features=PackedStringArray("4.3", "GL Compatibility")
 [autoload]
 
 Loc="*res://scripts/loc.gd"
+DevConsole="*res://scripts/dev_console.gd"
 
 [display]
 
