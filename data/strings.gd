@@ -3,6 +3,14 @@
 extends RefCounted
 
 const STRINGS := {
+	"game_title": {"zh": "艾尼斯：计算机里的世界", "en": "ANX: Inside the Computer"},
+	"menu_subtitle": {
+		"zh": "从一个比特出发，看懂真正的计算机",
+		"en": "Start as a single bit and learn how computers really work",
+	},
+	"start": {"zh": "开始游戏", "en": "Start"},
+	"menu_hint": {"zh": "← → 切换语言，回车开始", "en": "← → to switch language, Enter to start"},
+	"menu": {"zh": "菜单", "en": "Menu"},
 	"level_title": {"zh": "第 1 关 · 比特诞生", "en": "Level 1 · A Bit Is Born"},
 	"goal": {"zh": "目标", "en": "Goal"},
 	"binary": {"zh": "二进制", "en": "Binary"},

@@ -1,34 +1,36 @@
-## Localization autoload. Shows Chinese, English, or both at once.
+## Localization autoload. The player picks Chinese or English in the main menu;
+## the choice is saved to user://settings.cfg.
 extends Node
 
 signal changed
 
-enum Mode { BOTH, ZH, EN }
+enum Mode { ZH, EN }
 
 const Strings := preload("res://data/strings.gd")
+const SETTINGS_PATH := "user://settings.cfg"
 
-var mode: Mode = Mode.BOTH
+var mode: Mode = Mode.ZH
 
 
-## Returns the lines to display for a key in the current mode (1 or 2 lines).
-func lines(key: String, args: Dictionary = {}) -> Array:
+func _ready() -> void:
+	var cfg := ConfigFile.new()
+	if cfg.load(SETTINGS_PATH) == OK:
+		mode = cfg.get_value("ui", "language", Mode.ZH) as Mode
+	else:
+		mode = Mode.ZH if OS.get_locale_language() == "zh" else Mode.EN
+
+
+## Text for a key in the chosen language, with {placeholders} filled from args.
+func text(key: String, args: Dictionary = {}) -> String:
 	var entry: Dictionary = Strings.STRINGS.get(key, {"zh": key, "en": key})
-	var zh: String = String(entry["zh"]).format(args)
-	var en: String = String(entry["en"]).format(args)
-	match mode:
-		Mode.ZH:
-			return [zh]
-		Mode.EN:
-			return [en]
-		_:
-			return [zh, en]
+	return String(entry["zh" if mode == Mode.ZH else "en"]).format(args)
 
 
-## Returns a single line: "中文 English" in BOTH mode.
-func short(key: String, args: Dictionary = {}) -> String:
-	return " ".join(lines(key, args))
-
-
-func cycle() -> void:
-	mode = ((mode + 1) % 3) as Mode
+func set_mode(m: Mode) -> void:
+	if m == mode:
+		return
+	mode = m
+	var cfg := ConfigFile.new()
+	cfg.set_value("ui", "language", mode)
+	cfg.save(SETTINGS_PATH)
 	changed.emit()

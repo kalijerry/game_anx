@@ -43,6 +43,7 @@ jobs:
       - name: Smoke run (fails on script errors)
         run: |
           godot --headless --path . --quit-after 120 2>&1 | tee smoke.log
+          godot --headless --path . res://scenes/level_01.tscn --quit-after 120 2>&1 | tee -a smoke.log
           if grep -qE "SCRIPT ERROR|Parse Error" smoke.log; then exit 1; fi
 
       - name: Export Web
