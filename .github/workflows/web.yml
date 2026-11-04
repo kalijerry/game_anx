@@ -35,7 +35,11 @@ jobs:
         run: godot --headless --path . --import
 
       - name: Unit tests
-        run: godot --headless --path . -s tests/test_bit_logic.gd
+        run: |
+          set -o pipefail
+          godot --headless --path . -s tests/test_bit_logic.gd
+          godot --headless --path . -s tests/test_level_02.gd 2>&1 | tee level02.log
+          if grep -qE "SCRIPT ERROR" level02.log; then exit 1; fi
 
       - name: Smoke run (fails on script errors)
         run: |

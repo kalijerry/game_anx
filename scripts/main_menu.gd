@@ -1,7 +1,7 @@
 ## Main menu: pick Chinese or English, then start.
 extends "res://scripts/flat_canvas.gd"
 
-const LEVEL_1 := "res://scenes/level_01.tscn"
+const Levels := preload("res://scripts/levels.gd")
 const ZH_RECT := Rect2(440, 420, 180, 56)
 const EN_RECT := Rect2(660, 420, 180, 56)
 const START_RECT := Rect2(490, 520, 300, 68)
@@ -25,7 +25,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _start() -> void:
-	get_tree().change_scene_to_file(LEVEL_1)
+	get_tree().change_scene_to_file(Levels.LEVELS[0]["scene"])
 
 
 func _draw() -> void:

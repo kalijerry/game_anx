@@ -4,8 +4,8 @@
 extends "res://scripts/flat_canvas.gd"
 
 const Bits := preload("res://scripts/bit_logic.gd")
+const Levels := preload("res://scripts/levels.gd")
 
-const MENU_SCENE := "res://scenes/main_menu.tscn"
 const TARGETS := ["A", "N", "X"]
 const CARD_W := 112.0
 const CARD_H := 150.0
@@ -16,7 +16,8 @@ const ASCII_RECT := Rect2(940, 36, 144, 48)
 const TABLE_RECT := Rect2(100, 96, 1080, 508)
 const TABLE_COLS := 9
 const CLOSE_RECT := Rect2(560, 530, 160, 52)
-const REPLAY_RECT := Rect2(530, 462, 220, 56)
+const REPLAY_RECT := Rect2(400, 462, 220, 56)
+const NEXT_RECT := Rect2(660, 462, 220, 56)
 
 var bits: Array = [0, 0, 0, 0, 0, 0, 0, 0]
 var cursor := 0
@@ -70,7 +71,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if table_open:
 			_toggle_table()
 		elif done:
-			_restart()
+			_next_level()
 		else:
 			_flip(cursor)
 
@@ -89,6 +90,8 @@ func _on_click(pos: Vector2) -> void:
 	if done:
 		if REPLAY_RECT.has_point(pos):
 			_restart()
+		elif NEXT_RECT.has_point(pos):
+			_next_level()
 		return
 	for i in Bits.BYTE_SIZE:
 		if _card_rect(i).grow(8).has_point(pos):
@@ -103,7 +106,11 @@ func _toggle_table() -> void:
 
 
 func _to_menu() -> void:
-	get_tree().change_scene_to_file(MENU_SCENE)
+	get_tree().change_scene_to_file(Levels.MENU)
+
+
+func _next_level() -> void:
+	get_tree().change_scene_to_file(Levels.LEVELS[1]["scene"])
 
 
 func _move(dir: int) -> void:
@@ -249,7 +256,8 @@ func _draw_card() -> void:
 		draw_circle(Vector2(r.position.x + 56, y - 7), 8, P.YELLOW)
 		text(Vector2(r.position.x + 80, y), Loc.text(key), 22, P.INK)
 		y += 72
-	button(REPLAY_RECT, Loc.text("replay"))
+	button(REPLAY_RECT, Loc.text("replay"), false)
+	button(NEXT_RECT, Loc.text("next_level"))
 
 
 func _draw_ascii_button() -> void:

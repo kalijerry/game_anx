@@ -3,6 +3,7 @@ extends SceneTree
 
 const Bits := preload("res://scripts/bit_logic.gd")
 const Strings := preload("res://data/strings.gd")
+const Clock := preload("res://scripts/clock_logic.gd")
 
 var failures := 0
 
@@ -26,6 +27,16 @@ func _init() -> void:
 	check(Bits.bits_to_string([0, 1, 0, 0, 0, 0, 0, 1]) == "0100 0001", "formats with a space")
 	check(Bits.to_char(65) == "A" and Bits.to_char(88) == "X", "65 = A, 88 = X")
 	check(Bits.to_char(7) == "·", "non-printable shows a dot")
+
+	print("clock_logic")
+	var reg := [0, 0, 0, 0, 0, 0, 0, 0]
+	for b in Clock.send_order(71):  # G
+		reg = Clock.shift_in(reg, b)
+	check(Bits.bits_to_int(reg) == 71, "8 edges MSB first load G = 71")
+	check(Clock.shift_in([1, 0, 0, 0, 0, 0, 0, 1], 1) == [0, 0, 0, 0, 0, 0, 1, 1], "shift drops the left bit")
+	check(Clock.shift_in(reg, 0).size() == 8, "register stays 8 bits")
+	check(Clock.is_high(0.0) and Clock.is_high(0.49) and not Clock.is_high(0.5), "high for first half of a cycle")
+	check(Clock.is_high(3.2) and not Clock.is_high(-0.2), "phase wraps")
 
 	print("strings")
 	for key in Strings.STRINGS:

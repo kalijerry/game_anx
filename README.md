@@ -16,6 +16,23 @@ A cross-platform game about how computers really work. You play ANX, a newborn b
 - 主菜单选择中文或 English，选择会保存下来；关卡右上角「菜单」返回，Esc 也可以
 - 全部画面用代码绘制（扁平矢量风格），暂无美术素材
 
+第 2 关「时钟节拍」：时钟驱动一个 8 位移位寄存器，玩家设置输入 D，每个上升沿寄存器左移一位并记住 D。依次送入 G、O（第二轮时钟更快），通关后解锁「时钟与触发器」知识卡。第 1 关通关后点「下一关」进入。
+
+![Level 2](docs/screenshots/level02_zh.png)
+
+### 开发者命令台 / Developer console
+
+任何界面按 <code>`</code> 打开（触屏：5 秒内连点左上角 5 次）。命令：
+
+| 命令 | 作用 |
+| --- | --- |
+| `test` | 选关 |
+| `menu` | 回主菜单 |
+| `lang zh` / `lang en` | 切换语言 |
+| `help` | 显示命令 |
+
+新关卡只要加进 `scripts/levels.gd` 就会出现在选关列表里。
+
 ## 运行 / Run
 
 需要 [Godot 4.3+](https://godotengine.org/download)（标准版，GDScript）。
@@ -23,6 +40,7 @@ A cross-platform game about how computers really work. You play ANX, a newborn b
 ```sh
 godot --path .                       # 运行游戏 / play
 godot --headless --path . -s tests/test_bit_logic.gd   # 单元测试 / unit tests
+godot --headless --path . -s tests/test_level_02.gd    # 第 2 关自动通关测试
 godot --path . res://scenes/level_01.tscn -- --demo=complete   # 直接显示通关画面，方便截图
 godot --path . res://scenes/level_01.tscn -- --demo=table      # 直接显示 ASCII 表
 ```
@@ -37,7 +55,10 @@ godot --path . res://scenes/level_01.tscn -- --demo=table      # 直接显示 AS
 | `scenes/level_01.tscn` | 第 1 关场景 |
 | `scripts/flat_canvas.gd` | 所有画面共用的绘制基类：字体、背景、按钮、艾尼斯 |
 | `scripts/level_01.gd` | 第 1 关玩法与绘制 |
-| `scripts/bit_logic.gd` | 比特与字节的纯逻辑（有单元测试） |
+| `scenes/level_02.tscn`、`scripts/level_02.gd` | 第 2 关：时钟与移位寄存器 |
+| `scripts/bit_logic.gd`、`scripts/clock_logic.gd` | 比特、时钟、移位寄存器的纯逻辑（有单元测试） |
+| `scripts/levels.gd` | 关卡列表，主菜单、关卡和命令台共用 |
+| `scripts/dev_console.gd` | 开发者命令台（autoload `DevConsole`） |
 | `scripts/palette.gd` | 扁平矢量配色 |
 | `scripts/loc.gd` | 语言选择与保存（autoload `Loc`），首次启动按系统语言 |
 | `data/strings.gd` | 全部中英文文本，每个 key 必须同时有 `zh` 和 `en` |
