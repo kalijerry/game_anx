@@ -23,13 +23,20 @@ const STRINGS := {
 		"en": "I'm ANX, a newborn bit! Eight bits in a row make one byte.",
 	},
 	"hint": {
-		"zh": "拼出字母 {letter}，它的编号是 {value}。把亮起的权重加起来试试！",
-		"en": "Make the letter {letter}. Its code is {value}. Add up the lit weights!",
+		"zh": "拼出字母 {letter}！查查 ASCII 表，它的编号是 {value}。",
+		"en": "Make the letter {letter}! The ASCII table says its code is {value}.",
 	},
 	"controls": {
-		"zh": "← → 移动，空格翻转比特；也可以直接点击开关。",
-		"en": "← → to move, Space to flip a bit, or just tap a switch.",
+		"zh": "← → 移动，空格翻转比特，Tab 打开 ASCII 表；也可以直接点击。",
+		"en": "← → to move, Space to flip a bit, Tab for the ASCII table, or just tap.",
 	},
+	"ascii_button": {"zh": "ASCII 表", "en": "ASCII"},
+	"ascii_title": {"zh": "ASCII 表 · 大写字母", "en": "ASCII Table · Capital Letters"},
+	"ascii_note": {
+		"zh": "大写字母从 65（A）开始，每往后一个字母编号加 1。黄色是目标，青色是你现在拼出的字母。",
+		"en": "Capitals start at 65 (A) and go up by 1 per letter. Yellow is your goal, teal is what you have now.",
+	},
+	"close": {"zh": "关闭", "en": "Close"},
 	"success": {
 		"zh": "成功！{value} 就是字母 {letter}。",
 		"en": "Yes! {value} is the letter {letter}.",
