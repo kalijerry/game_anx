@@ -1,0 +1,63 @@
+name: Set up Godot
+description: >
+  Installs the Godot editor binary and, optionally, only the Web export templates.
+  Both are cached, so a warm run restores a few tens of MB instead of pulling a 1 GB image.
+  Also restores the project's import cache (.godot/).
+
+inputs:
+  version:
+    description: Godot version, for example 4.3
+    required: true
+  web-templates:
+    description: Also install the Web export templates
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Cache Godot binary
+      id: bin
+      uses: actions/cache@v4
+      with:
+        path: ~/godot-bin
+        key: godot-bin-${{ inputs.version }}-linux-x86_64
+
+    - name: Download Godot binary
+      if: steps.bin.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        mkdir -p ~/godot-bin && cd ~/godot-bin
+        curl -fsSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${{ inputs.version }}-stable/Godot_v${{ inputs.version }}-stable_linux.x86_64.zip"
+        unzip -q godot.zip && rm godot.zip
+        mv Godot_v${{ inputs.version }}-stable_linux.x86_64 godot && chmod +x godot
+
+    - name: Put Godot on PATH
+      shell: bash
+      run: echo "$HOME/godot-bin" >> "$GITHUB_PATH"
+
+    - name: Cache Web export templates
+      id: tpl
+      if: inputs.web-templates == 'true'
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/share/godot/export_templates/${{ inputs.version }}.stable
+        key: godot-templates-web-${{ inputs.version }}
+
+    - name: Download Web export templates
+      if: inputs.web-templates == 'true' && steps.tpl.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        dest=~/.local/share/godot/export_templates/${{ inputs.version }}.stable
+        mkdir -p "$dest"
+        curl -fsSL -o /tmp/templates.tpz "https://github.com/godotengine/godot/releases/download/${{ inputs.version }}-stable/Godot_v${{ inputs.version }}-stable_export_templates.tpz"
+        # Keep only what the Web preset needs; the full archive is about 1 GB.
+        unzip -j -o /tmp/templates.tpz 'templates/version.txt' 'templates/web_nothreads_*' -d "$dest"
+        rm /tmp/templates.tpz
+        ls -la "$dest"
+
+    - name: Cache import data
+      uses: actions/cache@v4
+      with:
+        path: .godot
+        key: godot-import-${{ inputs.version }}-${{ hashFiles('project.godot', 'assets/**') }}
+        restore-keys: godot-import-${{ inputs.version }}-

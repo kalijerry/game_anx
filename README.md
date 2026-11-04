@@ -49,6 +49,9 @@ godot --path . res://scenes/level_01.tscn -- --demo=table      # 直接显示 AS
 
 `.github/workflows/web.yml` 在每次推送到 `main` 时自动运行测试、导出 Web 版并发布到 GitHub Pages；PR 上只测试和导出，不发布。
 
+- 测试（`test`）和 Web 导出（`export-web`）在两个 runner 上并行跑，发布（`deploy`）等两者都通过
+- `.github/actions/setup-godot` 缓存 Godot 本体、只含 Web 的导出模板和 `.godot/` 导入缓存，命中缓存时不用再下载 1 GB 的模板包或容器镜像
+
 首次使用需要在仓库 Settings → Pages → Source 选择 **GitHub Actions**。发布地址：https://kalijerry.github.io/game_anx/
 
 Web 导出关闭了多线程，所以 GitHub Pages 不需要额外的 COOP/COEP 响应头。

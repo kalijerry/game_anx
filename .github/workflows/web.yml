@@ -1,5 +1,6 @@
-# Tests the game, exports the Web build, and publishes it to GitHub Pages on every push to main.
-# Pull requests run the same tests and export, without publishing.
+# Tests the game and exports the Web build on every PR; publishes to GitHub Pages on push to main.
+# "test" and "export-web" run in parallel on separate runners; "deploy" waits for both.
+# Godot, its Web export templates and the import cache are cached (see .github/actions/setup-godot).
 # One-time setup: repo Settings → Pages → Source: "GitHub Actions".
 name: Web build
 
@@ -11,28 +12,24 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: web-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   GODOT_VERSION: "4.3"
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-    container:
-      image: barichello/godot-ci:4.3
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install export templates
-        run: |
-          mkdir -p ~/.local/share/godot/export_templates/
-          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+      - uses: ./.github/actions/setup-godot
+        with:
+          version: ${{ env.GODOT_VERSION }}
 
       - name: Import project
         run: godot --headless --path . --import
@@ -45,6 +42,20 @@ jobs:
           godot --headless --path . --quit-after 120 2>&1 | tee smoke.log
           godot --headless --path . res://scenes/level_01.tscn --quit-after 120 2>&1 | tee -a smoke.log
           if grep -qE "SCRIPT ERROR|Parse Error" smoke.log; then exit 1; fi
+
+  export-web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-godot
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          web-templates: "true"
+
+      - name: Import project
+        run: godot --headless --path . --import
 
       - name: Export Web
         run: |
@@ -60,8 +71,11 @@ jobs:
 
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: build
+    needs: [test, export-web]
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
