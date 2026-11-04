@@ -12,6 +12,10 @@ const CARD_H := 150.0
 const CARD_GAP := 24.0
 const CARD_Y := 300.0
 const MENU_RECT := Rect2(1100, 36, 140, 48)
+const ASCII_RECT := Rect2(940, 36, 144, 48)
+const TABLE_RECT := Rect2(100, 96, 1080, 508)
+const TABLE_COLS := 9
+const CLOSE_RECT := Rect2(560, 530, 160, 52)
 const REPLAY_RECT := Rect2(530, 462, 220, 56)
 
 var bits: Array = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -22,6 +26,8 @@ var done := false
 var msg_key := "intro"
 var msg_args := {}
 var anx_x := 0.0
+var table_open := false
+var table_seen := false
 
 
 func _ready() -> void:
@@ -31,6 +37,13 @@ func _ready() -> void:
 		stage = TARGETS.size()
 		done = true
 		msg_key = "complete"
+	# Screenshot helper: ... -- --demo=table  (goal N, bits currently spell M)
+	if "--demo=table" in OS.get_cmdline_user_args():
+		stage = 1
+		bits = Bits.int_to_bits(77)
+		table_open = true
+		table_seen = true
+		_show_hint()
 
 
 func _process(delta: float) -> void:
@@ -42,14 +55,21 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_on_click(make_input_local(event).position)
+	elif event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_TAB:
+		_toggle_table()
 	elif event.is_action_pressed("ui_cancel"):
-		_to_menu()
+		if table_open:
+			_toggle_table()
+		else:
+			_to_menu()
 	elif event.is_action_pressed("ui_left"):
 		_move(-1)
 	elif event.is_action_pressed("ui_right"):
 		_move(1)
 	elif event.is_action_pressed("ui_accept"):
-		if done:
+		if table_open:
+			_toggle_table()
+		elif done:
 			_restart()
 		else:
 			_flip(cursor)
@@ -58,6 +78,13 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_click(pos: Vector2) -> void:
 	if MENU_RECT.has_point(pos):
 		_to_menu()
+		return
+	if table_open:
+		# Any click closes the table, so the switches are never blocked.
+		_toggle_table()
+		return
+	if ASCII_RECT.has_point(pos):
+		_toggle_table()
 		return
 	if done:
 		if REPLAY_RECT.has_point(pos):
@@ -70,12 +97,17 @@ func _on_click(pos: Vector2) -> void:
 			return
 
 
+func _toggle_table() -> void:
+	table_open = not table_open
+	table_seen = true
+
+
 func _to_menu() -> void:
 	get_tree().change_scene_to_file(MENU_SCENE)
 
 
 func _move(dir: int) -> void:
-	if done:
+	if done or table_open:
 		return
 	cursor = clampi(cursor + dir, 0, Bits.BYTE_SIZE - 1)
 
@@ -139,13 +171,16 @@ func _draw() -> void:
 	rrect(Rect2(80, 450, 1120, 28), P.SHELF, 14)
 	text(Vector2(40, 72), Loc.text("level_title"), 34, P.INK)
 	button(MENU_RECT, Loc.text("menu"))
+	_draw_ascii_button()
 	_draw_goal()
 	for i in Bits.BYTE_SIZE:
 		_draw_switch(i)
 	draw_anx(Vector2(anx_x, 232 + sin(time * 3.0) * 4.0), 1.0)
 	_draw_readout()
 	_draw_dialogue()
-	if done:
+	if table_open:
+		_draw_table()
+	elif done:
 		_draw_card()
 
 
@@ -215,3 +250,41 @@ func _draw_card() -> void:
 		text(Vector2(r.position.x + 80, y), Loc.text(key), 22, P.INK)
 		y += 72
 	button(REPLAY_RECT, Loc.text("replay"))
+
+
+func _draw_ascii_button() -> void:
+	# Pulses in yellow until the player has opened the table once.
+	if table_seen or done:
+		button(ASCII_RECT, Loc.text("ascii_button"), table_open)
+		return
+	var glow := 0.5 + 0.5 * sin(time * 4.0)
+	rrect(ASCII_RECT.grow(4 * glow), Color(P.YELLOW, 0.5 * glow), 28)
+	rrect(ASCII_RECT, P.YELLOW, 24)
+	text_c(ASCII_RECT, ASCII_RECT.position.y + 31, Loc.text("ascii_button"), 20, P.INK)
+
+
+func _draw_table() -> void:
+	draw_rect(Rect2(0, 0, 1280, 720), Color(P.INK, 0.45))
+	var r := TABLE_RECT
+	rrect(r, P.WHITE, 32)
+	text_c(r, r.position.y + 52, Loc.text("ascii_title"), 28, P.INK)
+	var goal := -1 if done else String(TARGETS[stage]).unicode_at(0)
+	var now := Bits.bits_to_int(bits)
+	var cw := 112.0
+	var ch := 98.0
+	var x0 := r.position.x + (r.size.x - cw * TABLE_COLS) / 2.0
+	var y0 := r.position.y + 76
+	for i in 26:
+		var code := 65 + i
+		var cell := Rect2(x0 + (i % TABLE_COLS) * cw + 4, y0 + (i / TABLE_COLS) * ch + 4, cw - 8, ch - 8)
+		var fill := P.BG
+		if code == now:
+			fill = Color(P.TEAL, 0.35)
+		if code == goal:
+			fill = P.YELLOW
+		rrect(cell, fill, 14, P.TEAL_DARK if code == now else Color.TRANSPARENT, 3 if code == now else 0)
+		text_c(cell, cell.position.y + 34, String.chr(code), 28, P.INK)
+		text_c(cell, cell.position.y + 60, str(code), 18, P.INK)
+		text_c(cell, cell.position.y + 80, Bits.bits_to_string(Bits.int_to_bits(code)), 13, P.QUIET)
+	text_c(r, y0 + ch * 3 + 26, Loc.text("ascii_note"), 16, P.QUIET)
+	button(CLOSE_RECT, Loc.text("close"))

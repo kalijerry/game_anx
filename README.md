@@ -11,7 +11,8 @@ A cross-platform game about how computers really work. You play ANX, a newborn b
 
 第 1 关「比特诞生」可玩原型：翻转 8 个开关组成一个字节，依次拼出 A、N、X 的 ASCII 码，通关后解锁知识卡。
 
-- 操作：← → 移动，空格翻转；鼠标或触屏直接点击开关
+- 操作：← → 移动，空格翻转，Tab 打开 ASCII 表；鼠标或触屏直接点击开关
+- ASCII 表：右上角按钮随时打开，列出 A–Z 的十进制和二进制编码，标出目标字母和当前拼出的字母
 - 主菜单选择中文或 English，选择会保存下来；关卡右上角「菜单」返回，Esc 也可以
 - 全部画面用代码绘制（扁平矢量风格），暂无美术素材
 
@@ -23,6 +24,7 @@ A cross-platform game about how computers really work. You play ANX, a newborn b
 godot --path .                       # 运行游戏 / play
 godot --headless --path . -s tests/test_bit_logic.gd   # 单元测试 / unit tests
 godot --path . res://scenes/level_01.tscn -- --demo=complete   # 直接显示通关画面，方便截图
+godot --path . res://scenes/level_01.tscn -- --demo=table      # 直接显示 ASCII 表
 ```
 
 也可以用 Godot 编辑器打开 `project.godot`，按 F5 运行。
