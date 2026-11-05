@@ -60,14 +60,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif done and REPLAY_RECT.has_point(pos):
 			_restart()
 		elif done and MENU_BTN_RECT.has_point(pos):
-			_to_menu()
+			get_tree().change_scene_to_file(Levels.LEVELS[2]["scene"])
 		elif D_RECT.grow(16).has_point(pos):
 			_toggle_d()
 	elif event.is_action_pressed("ui_cancel"):
 		_to_menu()
 	elif event.is_action_pressed("ui_accept"):
 		if done:
-			_restart()
+			get_tree().change_scene_to_file(Levels.LEVELS[2]["scene"])
 		else:
 			_toggle_d()
 
@@ -261,5 +261,5 @@ func _draw_card() -> void:
 		draw_circle(Vector2(r.position.x + 56, y - 7), 8, P.YELLOW)
 		text(Vector2(r.position.x + 80, y), Loc.text(key), 22, P.INK)
 		y += 72
-	button(REPLAY_RECT, Loc.text("replay"))
-	button(MENU_BTN_RECT, Loc.text("main_menu"), false)
+	button(REPLAY_RECT, Loc.text("replay"), false)
+	button(MENU_BTN_RECT, Loc.text("next_level"))

@@ -20,6 +20,10 @@ A cross-platform game about how computers really work. You play ANX, a newborn b
 
 ![Level 2](docs/screenshots/level02_zh.png)
 
+第 3 关「取指」：内存里放着一段小程序，PC（程序计数器）指出下一条指令的地址。玩家把艾尼斯移到 PC 指的格子取指，指令进入 IR，PC 加 1；遇到 JMP 时 PC 被直接改写，中间的数据被跳过。一直取到 HALT，解锁「程序计数器与取指」知识卡。第 2 关通关后点「下一关」进入。
+
+![Level 3](docs/screenshots/level03_zh.png)
+
 ### 开发者命令台 / Developer console
 
 任何界面按 <code>`</code> 打开（触屏：5 秒内连点左上角 5 次）。命令：
@@ -41,6 +45,7 @@ A cross-platform game about how computers really work. You play ANX, a newborn b
 godot --path .                       # 运行游戏 / play
 godot --headless --path . -s tests/test_bit_logic.gd   # 单元测试 / unit tests
 godot --headless --path . -s tests/test_level_02.gd    # 第 2 关自动通关测试
+godot --headless --path . -s tests/test_level_03.gd    # 第 3 关自动通关测试
 godot --path . res://scenes/level_01.tscn -- --demo=complete   # 直接显示通关画面，方便截图
 godot --path . res://scenes/level_01.tscn -- --demo=table      # 直接显示 ASCII 表
 ```
@@ -56,6 +61,7 @@ godot --path . res://scenes/level_01.tscn -- --demo=table      # 直接显示 AS
 | `scripts/flat_canvas.gd` | 所有画面共用的绘制基类：字体、背景、按钮、艾尼斯 |
 | `scripts/level_01.gd` | 第 1 关玩法与绘制 |
 | `scenes/level_02.tscn`、`scripts/level_02.gd` | 第 2 关：时钟与移位寄存器 |
+| `scenes/level_03.tscn`、`scripts/level_03.gd`、`scripts/cpu_logic.gd` | 第 3 关：程序计数器与取指 |
 | `scripts/bit_logic.gd`、`scripts/clock_logic.gd` | 比特、时钟、移位寄存器的纯逻辑（有单元测试） |
 | `scripts/levels.gd` | 关卡列表，主菜单、关卡和命令台共用 |
 | `scripts/dev_console.gd` | 开发者命令台（autoload `DevConsole`） |

@@ -4,6 +4,7 @@ extends SceneTree
 const Bits := preload("res://scripts/bit_logic.gd")
 const Strings := preload("res://data/strings.gd")
 const Clock := preload("res://scripts/clock_logic.gd")
+const Cpu := preload("res://scripts/cpu_logic.gd")
 
 var failures := 0
 
@@ -37,6 +38,12 @@ func _init() -> void:
 	check(Clock.shift_in(reg, 0).size() == 8, "register stays 8 bits")
 	check(Clock.is_high(0.0) and Clock.is_high(0.49) and not Clock.is_high(0.5), "high for first half of a cycle")
 	check(Clock.is_high(3.2) and not Clock.is_high(-0.2), "phase wraps")
+
+	print("cpu_logic")
+	check(Cpu.fetch_order(Cpu.PROGRAM) == [0, 1, 2, 6, 7], "program runs 0,1,2 then jumps to 6 and halts at 7")
+	check(Cpu.mnemonic(0x13) == "LDA 3" and Cpu.mnemonic(0x46) == "JMP 6", "mnemonics")
+	check(Cpu.next_pc(15, 0x13) == 0, "PC wraps after 15")
+	check(Cpu.addr_bits(6) == "0110", "4-bit address")
 
 	print("strings")
 	for key in Strings.STRINGS:

@@ -63,6 +63,50 @@ const STRINGS := {
 	"main_menu": {"zh": "主菜单", "en": "Main menu"},
 	"level_1_short": {"zh": "第 1 关", "en": "Level 1"},
 	"level_2_short": {"zh": "第 2 关", "en": "Level 2"},
+	# ------------------------------------------------------------ Level 3
+	"level3_title": {"zh": "第 3 关 · 取指", "en": "Level 3 · Fetch"},
+	"memory": {"zh": "内存：16 个格子，每格 1 字节，上方是地址", "en": "Memory: 16 cells of 1 byte, address on top"},
+	"pc_label": {"zh": "PC 程序计数器：下一条指令的地址", "en": "PC (program counter): next address"},
+	"ir_label": {"zh": "IR 指令寄存器：刚取到的指令", "en": "IR (instruction register): fetched"},
+	"fetched_count": {"zh": "已取指 {n} / {total}", "en": "Fetched {n} / {total}"},
+	"data": {"zh": "数据", "en": "data"},
+	"l3_intro": {
+		"zh": "我是取指员！看 PC 里的地址，去那个格子把指令取回 IR。",
+		"en": "I'm the fetcher! Read the address in PC, then fetch that cell into IR.",
+	},
+	"l3_fetched": {
+		"zh": "取到 {mn}！PC 加 1，下一条在地址 {addr}（{dec}）。",
+		"en": "Got {mn}! PC goes up by 1: next is address {addr} ({dec}).",
+	},
+	"l3_jump": {
+		"zh": "是 JMP 跳转！PC 被直接改成 {addr}（{dec}），中间的数据跳过不执行。",
+		"en": "A JMP! PC is set straight to {addr} ({dec}), skipping the data in between.",
+	},
+	"l3_wrong": {
+		"zh": "不是这个格子。PC 里写的是 {addr}，也就是地址 {dec}。",
+		"en": "Not this cell. PC says {addr}, which is address {dec}.",
+	},
+	"l3_complete": {
+		"zh": "取到 HALT，程序结束！下一关我们来真正执行这些指令。",
+		"en": "HALT fetched, the program ends! Next level we really execute them.",
+	},
+	"l3_controls": {
+		"zh": "方向键移动，空格取指；也可以直接点击格子。",
+		"en": "Arrow keys to move, Space to fetch, or just tap a cell.",
+	},
+	"card3_title": {"zh": "知识卡 · 程序计数器与取指", "en": "Knowledge Card · Program Counter and Fetch"},
+	"card3_1": {
+		"zh": "程序和数据都以数字存在内存里，每个格子都有自己的地址。",
+		"en": "Programs and data both live in memory as numbers; every cell has an address.",
+	},
+	"card3_2": {
+		"zh": "PC 记着下一条指令的地址，每取一条通常就加 1。",
+		"en": "The PC holds the next instruction's address and usually adds 1 after each fetch.",
+	},
+	"card3_3": {
+		"zh": "跳转指令直接改写 PC，所以程序可以跳过或重复某些指令。",
+		"en": "Jumps rewrite the PC, so programs can skip or repeat instructions.",
+	},
 	# ------------------------------------------------------------ Developer console
 	"console_help": {
 		"zh": "命令：test 选关 · menu 主菜单 · lang zh / lang en 切换语言 · help 帮助。按 ` 或 Esc 关闭。",
