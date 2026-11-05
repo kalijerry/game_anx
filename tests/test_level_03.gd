@@ -20,13 +20,19 @@ func _initialize() -> void:
 	var lvl: Node = load("res://scenes/level_03.tscn").instantiate()
 	root.add_child(lvl)
 	await process_frame
+	check(lvl.teaching() and lvl.msg_key == "l3_t1", "starts with the beginner walkthrough")
+	lvl._fetch()
+	check(lvl.ir == -1, "no fetching while ANX is still explaining")
+	for _i in lvl.TEACH.size():
+		lvl._advance()
+	check(not lvl.teaching() and lvl.msg_key == "l3_go", "walkthrough ends with the first task")
 	lvl.cursor = 5
 	lvl._fetch()
-	check(lvl.pc == 0 and lvl.ir == -1 and lvl.msg_key == "l3_wrong", "fetching the wrong address is refused")
+	check(lvl.pc == 0 and lvl.ir == -1 and lvl.msg_key == "l3_wrong" and lvl.msg_args["got"] == 5, "fetching the wrong address is refused")
 	for addr in [0, 1, 2]:
 		lvl.cursor = addr
 		lvl._fetch()
-	check(lvl.pc == 6 and lvl.msg_key == "l3_jump", "JMP 6 rewrites the PC")
+	check(lvl.pc == 6 and lvl.msg_key == "l3_jump" and lvl.visited == [0, 1, 2], "JMP 6 rewrites the PC")
 	for addr in [6, 7]:
 		lvl.cursor = addr
 		lvl._fetch()

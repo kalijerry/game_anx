@@ -20,7 +20,7 @@ A cross-platform game about how computers really work. You play ANX, a newborn b
 
 ![Level 2](docs/screenshots/level02_zh.png)
 
-第 3 关「取指」：内存里放着一段小程序，PC（程序计数器）指出下一条指令的地址。玩家把艾尼斯移到 PC 指的格子取指，指令进入 IR，PC 加 1；遇到 JMP 时 PC 被直接改写，中间的数据被跳过。一直取到 HALT，解锁「程序计数器与取指」知识卡。第 2 关通关后点「下一关」进入。
+第 3 关「取指」：先由艾尼斯一句一句讲清楚什么是内存、地址、PC 和 IR（讲到哪里就高亮哪里），再让玩家动手：顺着蓝色箭头去 PC 指的格子取指，指令进入 IR 并显示白话意思，PC 加 1；遇到 JMP 时 PC 被直接改写，数据格子被跳过。一直取到 HALT，解锁「程序计数器与取指」知识卡。
 
 ![Level 3](docs/screenshots/level03_zh.png)
 

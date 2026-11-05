@@ -65,47 +65,85 @@ const STRINGS := {
 	"level_2_short": {"zh": "第 2 关", "en": "Level 2"},
 	# ------------------------------------------------------------ Level 3
 	"level3_title": {"zh": "第 3 关 · 取指", "en": "Level 3 · Fetch"},
-	"memory": {"zh": "内存：16 个格子，每格 1 字节，上方是地址", "en": "Memory: 16 cells of 1 byte, address on top"},
-	"pc_label": {"zh": "PC 程序计数器：下一条指令的地址", "en": "PC (program counter): next address"},
-	"ir_label": {"zh": "IR 指令寄存器：刚取到的指令", "en": "IR (instruction register): fetched"},
+	"memory": {
+		"zh": "内存：8 个带编号的格子，每格放 1 个字节。格子的编号叫「地址」。",
+		"en": "Memory: 8 numbered cells, 1 byte each. A cell's number is its address.",
+	},
+	"pc_label": {"zh": "PC 程序计数器", "en": "PC · Program Counter"},
+	"pc_value": {"zh": "{n} 号格子", "en": "cell {n}"},
+	"pc_sub": {"zh": "下一条指令在这里", "en": "the next instruction is here"},
+	"ir_label": {"zh": "IR 指令寄存器 · 刚取到的指令", "en": "IR · Instruction Register · what was just fetched"},
+	"ir_empty": {"zh": "空的，还没取指", "en": "empty, nothing fetched yet"},
 	"fetched_count": {"zh": "已取指 {n} / {total}", "en": "Fetched {n} / {total}"},
-	"data": {"zh": "数据", "en": "data"},
-	"l3_intro": {
-		"zh": "我是取指员！看 PC 里的地址，去那个格子把指令取回 IR。",
-		"en": "I'm the fetcher! Read the address in PC, then fetch that cell into IR.",
+	"cell_addr": {"zh": "{n} 号", "en": "cell {n}"},
+	"data_n": {"zh": "数据 {n}", "en": "data {n}"},
+	"empty": {"zh": "空", "en": "empty"},
+	"continue": {"zh": "继续 ▶", "en": "Next ▶"},
+	"mean_lda": {"zh": "把 {n} 号格子里的数放进 A", "en": "put the number in cell {n} into A"},
+	"mean_ldb": {"zh": "把 {n} 号格子里的数放进 B", "en": "put the number in cell {n} into B"},
+	"mean_add": {"zh": "把 A 和 B 加起来", "en": "add A and B together"},
+	"mean_jmp": {"zh": "跳到 {n} 号格子继续", "en": "jump to cell {n} and carry on"},
+	"mean_halt": {"zh": "停机，程序结束", "en": "stop, the program is over"},
+	"l3_t1": {
+		"zh": "这一关看看电脑怎么「读程序」。先认识内存：下面这一排格子就是内存，像一排带编号的抽屉。",
+		"en": "Let's see how a computer reads a program. First, memory: the row of cells below is memory, like a row of numbered drawers.",
+	},
+	"l3_t2": {
+		"zh": "每个格子放 1 个字节，也就是第 1 关学过的 8 个比特。格子的编号叫「地址」，从 0 开始数。",
+		"en": "Each cell holds 1 byte, the 8 bits from Level 1. A cell's number is called its address, counting from 0.",
+	},
+	"l3_t3": {
+		"zh": "程序也是数字，放在这些格子里。每个数字代表一条指令，比如 0001 0100 就是「LDA 4」，格子里写着它的名字。",
+		"en": "A program is numbers too, stored in these cells. Each number is an instruction: 0001 0100 means LDA 4, and each cell shows its name.",
+	},
+	"l3_t4": {
+		"zh": "左上角的 PC（程序计数器）像一张便签，写着「下一条指令在几号格子」。现在是 0，蓝色箭头也指着 0 号。",
+		"en": "The PC (program counter) at the top left is a sticky note: which cell holds the next instruction. It says 0, and the blue arrow points at cell 0.",
+	},
+	"l3_t5": {
+		"zh": "右边的 IR（指令寄存器）像 CPU 的手，拿住刚取出的指令。取指就是：看 PC，去那个格子，把指令放进 IR。",
+		"en": "The IR (instruction register) on the right is the CPU's hand: it holds the instruction just fetched. Fetching means: read PC, go to that cell, bring it to IR.",
+	},
+	"l3_go": {
+		"zh": "该你了！PC 写着 0，第一条指令就在 0 号格子。点一下 0 号格子（或按空格），把它取进 IR。",
+		"en": "Your turn! PC says 0, so the first instruction is in cell 0. Tap cell 0 (or press Space) to fetch it into IR.",
 	},
 	"l3_fetched": {
-		"zh": "取到 {mn}！PC 加 1，下一条在地址 {addr}（{dec}）。",
-		"en": "Got {mn}! PC goes up by 1: next is address {addr} ({dec}).",
+		"zh": "取到「{mn}」，意思是：{mean}。这关只取不做。PC 自动加 1，现在指向 {dec} 号，继续取！",
+		"en": "Got {mn}, which means: {mean}. This level only fetches. PC adds 1 by itself and now points at cell {dec}. Keep going!",
 	},
 	"l3_jump": {
-		"zh": "是 JMP 跳转！PC 被直接改成 {addr}（{dec}），中间的数据跳过不执行。",
-		"en": "A JMP! PC is set straight to {addr} ({dec}), skipping the data in between.",
+		"zh": "「JMP {dec}」意思是跳到 {dec} 号。这次 PC 不加 1，直接改成 {dec}，中间的格子被跳过（4、5 号是数据，不是指令）。去 {dec} 号取！",
+		"en": "JMP {dec} means jump to cell {dec}. PC doesn't add 1 this time, it becomes {dec}, skipping the cells between (4 and 5 are data, not instructions). Fetch cell {dec}!",
 	},
 	"l3_wrong": {
-		"zh": "不是这个格子。PC 里写的是 {addr}，也就是地址 {dec}。",
-		"en": "Not this cell. PC says {addr}, which is address {dec}.",
+		"zh": "这是 {got} 号格子哦。看蓝色箭头：PC 写着 {dec}，要去 {dec} 号格子取。",
+		"en": "That's cell {got}. Follow the blue arrow: PC says {dec}, so fetch from cell {dec}.",
 	},
 	"l3_complete": {
-		"zh": "取到 HALT，程序结束！下一关我们来真正执行这些指令。",
-		"en": "HALT fetched, the program ends! Next level we really execute them.",
+		"zh": "取到 HALT，程序结束！你按 PC 取完了整段程序。下一关我们真正执行这些指令。",
+		"en": "HALT fetched, the program is over! You followed the PC through the whole program. Next level we run them.",
 	},
 	"l3_controls": {
-		"zh": "方向键移动，空格取指；也可以直接点击格子。",
-		"en": "Arrow keys to move, Space to fetch, or just tap a cell.",
+		"zh": "点击格子取指；键盘：← → 移动，空格取指。",
+		"en": "Tap a cell to fetch. Keyboard: ← → to move, Space to fetch.",
+	},
+	"l3_controls_teach": {
+		"zh": "点「继续」或按空格看下一句。",
+		"en": "Tap Next or press Space to continue.",
 	},
 	"card3_title": {"zh": "知识卡 · 程序计数器与取指", "en": "Knowledge Card · Program Counter and Fetch"},
 	"card3_1": {
-		"zh": "程序和数据都以数字存在内存里，每个格子都有自己的地址。",
-		"en": "Programs and data both live in memory as numbers; every cell has an address.",
+		"zh": "程序和数据都是数字，存在内存的格子里；格子的编号叫地址。",
+		"en": "Programs and data are both numbers in memory cells; a cell's number is its address.",
 	},
 	"card3_2": {
-		"zh": "PC 记着下一条指令的地址，每取一条通常就加 1。",
+		"zh": "PC 记着下一条指令的地址，每取一条，PC 通常加 1。",
 		"en": "The PC holds the next instruction's address and usually adds 1 after each fetch.",
 	},
 	"card3_3": {
-		"zh": "跳转指令直接改写 PC，所以程序可以跳过或重复某些指令。",
-		"en": "Jumps rewrite the PC, so programs can skip or repeat instructions.",
+		"zh": "跳转指令（JMP）直接改写 PC，程序就能跳过或重复一些指令。",
+		"en": "A jump (JMP) rewrites the PC, so a program can skip or repeat instructions.",
 	},
 	# ------------------------------------------------------------ Developer console
 	"console_help": {

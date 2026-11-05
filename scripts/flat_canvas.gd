@@ -86,3 +86,45 @@ func text_c(r: Rect2, baseline: float, s: String, size: int, color: Color) -> vo
 
 func text_width(s: String, size: int) -> float:
 	return font.get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+
+
+## Greedy line wrap that works for both languages: each CJK character can break, English
+## breaks at spaces. Returns the lines; does not depend on the text server's ICU data.
+func wrap_lines(s: String, size: int, width: float) -> Array:
+	var tokens: Array = []
+	var word := ""
+	for ch in s:
+		var code := ch.unicode_at(0)
+		if ch == " ":
+			if word != "":
+				tokens.append(word)
+			tokens.append(" ")
+			word = ""
+		elif code >= 0x2E80:
+			if word != "":
+				tokens.append(word)
+			tokens.append(ch)
+			word = ""
+		else:
+			word += ch
+	if word != "":
+		tokens.append(word)
+	var lines: Array = []
+	var line := ""
+	for t in tokens:
+		var trial: String = line + t
+		if line != "" and text_width(trial, size) > width:
+			lines.append(line.strip_edges())
+			line = "" if t == " " else t
+		else:
+			line = trial
+	if line.strip_edges() != "":
+		lines.append(line.strip_edges())
+	return lines
+
+
+func text_wrap(pos: Vector2, s: String, size: int, color: Color, width: float, line_h: float) -> void:
+	var y := pos.y
+	for line in wrap_lines(s, size, width):
+		text(Vector2(pos.x, y), line, size, color)
+		y += line_h
