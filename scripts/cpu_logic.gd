@@ -4,17 +4,17 @@ extends RefCounted
 
 enum Op { DATA = 0, LDA = 1, LDB = 2, ADD = 3, JMP = 4, HALT = 15 }
 
-## Level 3 program. Addresses 3-5 hold data that the JMP at address 2 skips over.
+## Level 3 program, 8 cells. The JMP at 2 skips cell 3 (empty) and cells 4-5, which hold data
+## (the numbers 2 and 3) rather than instructions. Level 4 will execute it: A=2, B=3, A+B.
 const PROGRAM := [
-	0x13,  # 0: LDA 3
+	0x14,  # 0: LDA 4
 	0x25,  # 1: LDB 5
 	0x46,  # 2: JMP 6
-	0x00,  # 3: data
-	0x41,  # 4: data ('A')
-	0x4E,  # 5: data ('N')
+	0x00,  # 3: empty
+	0x02,  # 4: data 2
+	0x03,  # 5: data 3
 	0x30,  # 6: ADD
 	0xF0,  # 7: HALT
-	0, 0, 0, 0, 0, 0, 0, 0,
 ]
 
 

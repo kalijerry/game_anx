@@ -41,7 +41,7 @@ func _init() -> void:
 
 	print("cpu_logic")
 	check(Cpu.fetch_order(Cpu.PROGRAM) == [0, 1, 2, 6, 7], "program runs 0,1,2 then jumps to 6 and halts at 7")
-	check(Cpu.mnemonic(0x13) == "LDA 3" and Cpu.mnemonic(0x46) == "JMP 6", "mnemonics")
+	check(Cpu.mnemonic(0x14) == "LDA 4" and Cpu.mnemonic(0x46) == "JMP 6", "mnemonics")
 	check(Cpu.next_pc(15, 0x13) == 0, "PC wraps after 15")
 	check(Cpu.addr_bits(6) == "0110", "4-bit address")
 
