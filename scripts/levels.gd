@@ -7,4 +7,5 @@ const MENU := "res://scenes/main_menu.tscn"
 const LEVELS := [
 	{"scene": "res://scenes/level_01.tscn", "title": "level_title"},
 	{"scene": "res://scenes/level_02.tscn", "title": "level2_title"},
+	{"scene": "res://scenes/level_03.tscn", "title": "level3_title"},
 ]

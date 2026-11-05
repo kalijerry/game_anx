@@ -38,13 +38,17 @@ jobs:
         run: |
           set -o pipefail
           godot --headless --path . -s tests/test_bit_logic.gd
-          godot --headless --path . -s tests/test_level_02.gd 2>&1 | tee level02.log
-          if grep -qE "SCRIPT ERROR" level02.log; then exit 1; fi
+          for t in tests/test_level_*.gd; do
+            godot --headless --path . -s "$t" 2>&1 | tee -a levels.log
+          done
+          if grep -qE "SCRIPT ERROR" levels.log; then exit 1; fi
 
       - name: Smoke run (fails on script errors)
         run: |
           godot --headless --path . --quit-after 120 2>&1 | tee smoke.log
-          godot --headless --path . res://scenes/level_01.tscn --quit-after 120 2>&1 | tee -a smoke.log
+          for scene in scenes/level_*.tscn; do
+            godot --headless --path . "res://$scene" --quit-after 120 2>&1 | tee -a smoke.log
+          done
           if grep -qE "SCRIPT ERROR|Parse Error" smoke.log; then exit 1; fi
 
   export-web:
