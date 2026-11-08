@@ -1,5 +1,5 @@
 # Tests the game and exports the Web build on every PR; publishes to GitHub Pages on push to main.
-# "test" and "export-web" run in parallel on separate runners; "deploy" waits for both.
+# "test", "playtest" and "export-web" run in parallel on separate runners; "deploy" waits for all.
 # Godot, its Web export templates and the import cache are cached (see .github/actions/setup-godot).
 # One-time setup: repo Settings → Pages → Source: "GitHub Actions".
 name: Web build
@@ -51,6 +51,37 @@ jobs:
           done
           if grep -qE "SCRIPT ERROR|Parse Error" smoke.log; then exit 1; fi
 
+  # A bot plays every level in Chinese and English like a player, then mashes random input on
+  # each level; it fails on stuck levels, script errors, text off screen or missing text.
+  # The report shows on the run's Summary page and is kept as the "playtest-report" artifact.
+  playtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-godot
+        with:
+          version: ${{ env.GODOT_VERSION }}
+
+      - name: Import project
+        run: godot --headless --path . --import
+
+      - name: AI playtest
+        run: tools/playtest.sh
+
+      - name: Show report
+        if: always()
+        run: cat build/playtest/report.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Keep report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playtest-report
+          path: build/playtest/
+          retention-days: 14
+
   export-web:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -79,7 +110,7 @@ jobs:
 
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [test, export-web]
+    needs: [test, playtest, export-web]
     runs-on: ubuntu-latest
     permissions:
       pages: write

@@ -10,6 +10,8 @@ const Strings := preload("res://data/strings.gd")
 const SETTINGS_PATH := "user://settings.cfg"
 
 var mode: Mode = Mode.ZH
+## Keys asked for that have no text yet; the playtest bot reports them.
+var missing := {}
 
 
 func _ready() -> void:
@@ -22,6 +24,8 @@ func _ready() -> void:
 
 ## Text for a key in the chosen language, with {placeholders} filled from args.
 func text(key: String, args: Dictionary = {}) -> String:
+	if not Strings.STRINGS.has(key):
+		missing[key] = true
 	var entry: Dictionary = Strings.STRINGS.get(key, {"zh": key, "en": key})
 	return String(entry["zh" if mode == Mode.ZH else "en"]).format(args)
 

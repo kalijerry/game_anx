@@ -52,6 +52,17 @@ godot --path . res://scenes/level_01.tscn -- --demo=table      # 直接显示 AS
 
 也可以用 Godot 编辑器打开 `project.godot`，按 F5 运行。
 
+### AI 自动试玩 / AI playtest
+
+```sh
+tools/playtest.sh           # 无头快速跑（约 10 秒），CI 也跑这个
+tools/playtest.sh --shots   # 在 xvfb 下真实渲染，每句对白截一张图
+```
+
+一个机器人从主菜单开始，只用按键和点击，中文、英文各把所有关卡通关一遍；再对每关随机乱点乱按 300 次，然后确认还能通关（不崩、没有死局）。同时检查：文字超出屏幕或按钮、缺翻译、对白太长、卡住超时、脚本报错。报告写在 `build/playtest/report.md`（另有 `report.json` 和截图），CI 上显示在运行的 Summary 页，并保存为 `playtest-report` 附件。
+
+每关的玩法写在 `tests/playtest/brains/<关卡场景名>.gd`。改关卡后「跑测试 → 看报告和截图 → 按初学者视角自查 → 修改」的自迭代流程见 [CLAUDE.md](CLAUDE.md)。
+
 ## 目录 / Layout
 
 | 路径 | 内容 |
@@ -69,6 +80,9 @@ godot --path . res://scenes/level_01.tscn -- --demo=table      # 直接显示 AS
 | `scripts/loc.gd` | 语言选择与保存（autoload `Loc`），首次启动按系统语言 |
 | `data/strings.gd` | 全部中英文文本，每个 key 必须同时有 `zh` 和 `en` |
 | `tests/` | 无头运行的测试脚本 |
+| `tests/playtest/` | AI 自动试玩：`playtest.gd` 驱动，`brains/` 里每关一个玩法脚本 |
+| `tools/playtest.sh` | 运行 AI 试玩并检查日志 |
+| `CLAUDE.md` | 开发须知与自迭代流程 |
 | `tools/subset_font.py` | 生成内置中文字体子集 |
 | `export_presets.cfg` | Web 导出配置 |
 
@@ -76,7 +90,7 @@ godot --path . res://scenes/level_01.tscn -- --demo=table      # 直接显示 AS
 
 `.github/workflows/web.yml` 在每次推送到 `main` 时自动运行测试、导出 Web 版并发布到 GitHub Pages；PR 上只测试和导出，不发布。
 
-- 测试（`test`）和 Web 导出（`export-web`）在两个 runner 上并行跑，发布（`deploy`）等两者都通过
+- 测试（`test`）、AI 试玩（`playtest`）和 Web 导出（`export-web`）在三个 runner 上并行跑，发布（`deploy`）等三者都通过
 - `.github/actions/setup-godot` 缓存 Godot 本体、只含 Web 的导出模板和 `.godot/` 导入缓存，命中缓存时不用再下载 1 GB 的模板包或容器镜像
 
 首次使用需要在仓库 Settings → Pages → Source 选择 **GitHub Actions**。发布地址：https://kalijerry.github.io/game_anx/
