@@ -8,6 +8,13 @@ const UI_FONT: FontFile = preload("res://assets/fonts/anx_ui.ttf")
 var font: Font
 var time := 0.0
 
+## Playtest probe: when the bot turns it on, every label and button drawn is recorded, so the
+## bot can "see" the screen and the UI audit can spot text that spills out of its box.
+## ui_seen holds the last finished frame; ui_drawing collects the frame being drawn.
+static var probe_on := false
+var ui_seen: Array = []
+var ui_drawing: Array = []
+
 
 func _init() -> void:
 	# Bundled subset of Noto Sans SC (tools/subset_font.py); system fonts only as a fallback.
@@ -24,7 +31,15 @@ func _enter_tree() -> void:
 
 func _process(delta: float) -> void:
 	time += delta
+	if probe_on:
+		ui_seen = ui_drawing
+		ui_drawing = []
 	queue_redraw()
+
+
+func _probe(kind: String, s: String, r: Rect2, box := Rect2()) -> void:
+	if probe_on:
+		ui_drawing.append({"kind": kind, "text": s, "rect": r, "box": box})
 
 
 func draw_background() -> void:
@@ -57,6 +72,7 @@ func draw_anx(c: Vector2, s: float) -> void:
 
 ## A pill button. Filled when active, outlined otherwise.
 func button(r: Rect2, label: String, active := true) -> void:
+	_probe("button", label, r)
 	if active:
 		rrect(r, P.INK, int(r.size.y / 2))
 		text_c(r, r.position.y + r.size.y / 2 + 7, label, 20, P.WHITE)
@@ -77,10 +93,15 @@ func rrect(r: Rect2, color: Color, radius: int, border := Color.TRANSPARENT, bor
 
 
 func text(pos: Vector2, s: String, size: int, color: Color) -> void:
+	_probe("text", s, Rect2(pos.x, pos.y - size, text_width(s, size), size))
 	draw_string(font, pos, s, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
 
 func text_c(r: Rect2, baseline: float, s: String, size: int, color: Color) -> void:
+	if probe_on:
+		var w := text_width(s, size)
+		var box := Rect2(r.position.x, baseline - size, r.size.x, size)
+		_probe("text", s, Rect2(r.get_center().x - w / 2.0, baseline - size, w, size), box)
 	draw_string(font, Vector2(r.position.x, baseline), s, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, size, color)
 
 
